@@ -1,0 +1,55 @@
+{
+  "contract": "../design-contract.md",
+  "targetViewports": ["390x844", "768x900", "1440x900"],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Playwright/Axe found zero critical or serious violations after contrast and accessible-name fixes; the aircraft marker was focused and activated with Enter."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "The radar, timeline, navigation and selected-flight state were rendered and inspected at mobile, tablet and desktop dimensions without horizontal overflow."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "A delayed API route displayed the stable Updating positions state."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "An empty API response displayed No aircraft in this view and a clear-search action."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "A controlled HTTP 503 displayed the specific API error and a Retry action."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "The selected-flight inspector labels the deterministic Offline-ready analysis and baseline prediction when no LLM or trained model is configured."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Five E2E checks loaded four API aircraft, selected one, rendered its time-correct track and projection, ran tool-based analysis, and exercised replay."
+    },
+    "permission": {
+      "status": "not-applicable",
+      "reason": "This public local demonstration has no user permission-gated flows; external live data is disabled and the synthetic classification is always visible."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "390x844",
+      "artifact": "mobile-390x844.png",
+      "observation": "Mobile radar remains primary, timeline controls stay reachable, four targets and the selected track are visible, and the inspector begins below the fold."
+    },
+    {
+      "viewport": "768x900",
+      "artifact": "tablet-768x900.png",
+      "observation": "Tablet layout keeps the full radar and bottom navigation stable with legible source and replay controls."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "desktop-1440x900.png",
+      "observation": "Desktop layout shows four aircraft, range rings, observed and projected paths, and the complete selected-flight inspector without overlap."
+    }
+  ]
+}

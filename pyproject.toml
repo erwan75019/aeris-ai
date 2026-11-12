@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=84.1", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aeris-ai"
+version = "0.1.0"
+description = "AI-powered airspace intelligence platform"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "erwan75019" }]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "httpx>=0.27,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+database = [
+  "alembic>=1.14,<2",
+  "asyncpg>=0.30,<1",
+  "geoalchemy2>=0.17,<1",
+  "sqlalchemy[asyncio]>=2.0.36,<3",
+]
+ml = [
+  "joblib>=1.4,<2",
+  "numpy>=2.1,<3",
+  "pandas>=2.2,<4",
+  "scikit-learn>=1.6,<2",
+]
+dl = [
+  "torch>=2.6,<3",
+]
+dev = [
+  "httpx2>=2.16,<3",
+  "mypy>=1.14,<2",
+  "pytest>=8.3,<10",
+  "pytest-cov>=6,<8",
+  "ruff>=0.9,<1",
+]
+
+[tool.setuptools.packages.find]
+include = ["backend*"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["."]
+addopts = "--strict-markers"
+markers = [
+  "integration: tests that exercise component boundaries",
+  "slow: tests that train models or use large datasets",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+

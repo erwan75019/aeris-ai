@@ -1,31 +1,104 @@
-# AERIS AI ✈️
-### AI-Powered Airspace Intelligence Platform
+# AERIS AI
 
-AERIS AI is an intelligent aviation monitoring platform
-combining Machine Learning, Deep Learning and AI Agents.
+AI-powered airspace intelligence, built as an honest and reproducible research
+platform. The current release provides a complete offline radar journey backed
+by synthetic data, transparent prediction/anomaly baselines and deterministic
+analysis tools.
 
-## Objectives
+![AERIS AI desktop radar](docs/qa/desktop-1440x900.png)
 
-- Interactive aircraft tracking and flight replay
-- Flight trajectory prediction using Deep Learning
-- Anomaly detection using Machine Learning
-- AI-powered flight analysis and investigation
-- Air traffic simulation and visualization
+> Experimental software only. It is not certified for navigation, air-traffic
+> control, separation, or any safety-critical use.
 
-## Technology Stack
+## What works today
 
-- Python
-- FastAPI
-- PyTorch
-- Scikit-learn
-- Next.js
-- PostgreSQL / PostGIS
-- Docker
+- Interactive MapLibre radar with four reproducible synthetic flights
+- UTC flight replay with play/pause, speed and timeline controls
+- Observed tracks and 5/10/15-minute constant-velocity predictions
+- Explainable anomaly evidence, scenario simulation and intelligence reports
+- Responsive desktop/tablet/mobile interface with keyboard and screen-reader
+  support
+- Typed FastAPI contracts, strict TypeScript, 90%+ backend coverage, E2E and
+  accessibility tests
+- Docker Compose stack with Next.js, FastAPI and PostgreSQL/PostGIS
 
-## Project Status
+The project never labels a heuristic as ML or deterministic text as an LLM
+answer. Planned learned models must beat the documented baselines before use.
 
-🚧 Under active development
+## Quick start
 
-## Author
+Requirements: Python 3.11+, Node.js 22+ and npm.
 
-GitHub: @erwan75019
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev,database,ml]'
+npm --prefix frontend ci
+```
+
+Start the API and web application in separate terminals:
+
+```bash
+source .venv/bin/activate
+uvicorn backend.app.main:app --reload
+```
+
+```bash
+npm --prefix frontend run dev
+```
+
+Open <http://localhost:3000>. API documentation is available at
+<http://localhost:8000/docs>. No account, API key, database or network feed is
+needed for the demo.
+
+For the containerized stack:
+
+```bash
+docker compose up --build
+```
+
+The PostGIS tag currently uses amd64 emulation on Apple Silicon. The offline
+demo does not persist into PostGIS yet; the database is provisioned for the next
+repository/ingestion increment.
+
+## Quality checks
+
+```bash
+ruff check backend
+mypy backend
+pytest --cov=backend --cov-report=term-missing --cov-fail-under=90
+npm --prefix frontend run lint
+npm --prefix frontend run typecheck
+npm --prefix frontend test
+npm --prefix frontend run build
+npm --prefix frontend run test:e2e
+```
+
+The E2E suite starts both services, tests the primary radar journey and its
+loading/empty/error states, runs Axe serious/critical accessibility checks, and
+captures desktop, tablet and mobile screenshots in `docs/qa/`.
+
+## Repository map
+
+```text
+backend/        FastAPI routes, provider protocol and domain services
+frontend/       Next.js radar application and browser tests
+docker/         Non-root production image definitions
+docs/           Architecture, data policy, design contract, QA and roadmap
+compose.yaml    Local API/web/PostGIS stack
+pyproject.toml  Python package, tool configuration and dependency ranges
+```
+
+Read [the architecture](docs/architecture.md), [data-source policy](docs/data-sources.md),
+[design contract](docs/design-contract.md), and [delivery roadmap](docs/roadmap.md).
+
+## Configuration
+
+Copy `.env.example` to `.env` only when overriding defaults. Provider, database
+and optional LLM credentials are server-side variables. Never place secrets in
+`NEXT_PUBLIC_*` variables or commit `.env`.
+
+## Licence
+
+MIT. External aviation and weather data retain their own terms and are not
+redistributed by this repository.
