@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Machine Learning
+mlruns/
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.joblib
+
+# Datasets
+data/raw/
+data/processed/
+
+# Frontend
+node_modules/
+.next/
+out/
+dist/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
