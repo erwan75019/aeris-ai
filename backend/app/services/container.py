@@ -24,8 +24,8 @@ def build_services() -> ServiceContainer:
     settings = get_settings()
     provider = DemoFlightProvider()
     flights = FlightService(provider)
-    predictions = PredictionService(flights)
-    anomalies = AnomalyService(flights)
+    predictions = PredictionService(flights, settings.trajectory_artifact_dir)
+    anomalies = AnomalyService(flights, settings.anomaly_artifact_dir)
     return ServiceContainer(
         flights=flights,
         predictions=predictions,

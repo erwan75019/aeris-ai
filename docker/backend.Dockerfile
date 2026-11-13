@@ -8,9 +8,10 @@ WORKDIR /app
 
 RUN addgroup --system aeris && adduser --system --ingroup aeris aeris
 
-COPY pyproject.toml README.md LICENSE ./
+COPY pyproject.toml README.md LICENSE alembic.ini ./
 COPY backend ./backend
-RUN python -m pip install --no-cache-dir .
+COPY artifacts ./artifacts
+RUN python -m pip install --no-cache-dir '.[database,ml,dl]'
 
 USER aeris
 EXPOSE 8000

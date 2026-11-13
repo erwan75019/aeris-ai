@@ -33,17 +33,17 @@ It is not required by the offline demo provider.
 
 ## Current model semantics
 
-- Prediction: deterministic constant-velocity geodesic baseline at 5, 10 and
-  15 minutes.
+- Prediction: an integrity-checked Transformer at 5, 10 and 15 minutes when at
+  least 20 observations exist, with a deterministic constant-velocity fallback.
 - Anomaly detection: transparent, named domain rules with evidence and scores.
 - Intelligence: deterministic tool orchestration that cites the evidence used.
   It does not claim to be an LLM response when no LLM is configured.
 - Simulation: bounded wind/heading/speed scenarios derived from the selected
   flight state.
 
-These baselines are deliberately honest reference implementations. Versioned
-scikit-learn and PyTorch artifacts can be evaluated against them before being
-promoted.
+Both learned artifacts are versioned, checksum-verified and promoted only for
+the synthetic demo. Their held-out metrics and limitations are model cards, not
+claims about real-world aviation performance.
 
 ## Deployment
 

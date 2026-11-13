@@ -93,15 +93,26 @@ def test_malformed_icao24_is_rejected_before_provider_lookup() -> None:
     assert response.status_code == 422
 
 
-def test_prediction_exposes_baseline_and_horizons() -> None:
+def test_prediction_exposes_trained_model_metrics_and_horizons() -> None:
     response = client.get("/api/v1/flights/ae0001/prediction")
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["model"]["name"] == "constant_velocity_baseline"
-    assert payload["model"]["trained"] is False
+    assert payload["model"]["name"] == "transformer"
+    assert payload["model"]["trained"] is True
+    assert payload["model"]["metrics"]["mean_mae_km"] < 4
     assert [point["horizon_minutes"] for point in payload["points"]] == [5, 10, 15]
     assert payload["disclaimer"]
+
+
+def test_prediction_falls_back_when_replay_history_is_too_short() -> None:
+    response = client.get(
+        "/api/v1/flights/ae0001/prediction", params={"at": "2025-01-15T12:10:00Z"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["model"]["name"] == "constant_velocity_baseline"
+    assert response.json()["model"]["trained"] is False
 
 
 def test_anomaly_is_statistical_and_not_safety_claim() -> None:
@@ -111,7 +122,19 @@ def test_anomaly_is_statistical_and_not_safety_claim() -> None:
     payload = response.json()
     assert 0 <= payload["score"] <= 1
     assert payload["classification"] == "synthetic_demo"
+    assert payload["model"]["name"] == "isolation_forest"
+    assert payload["model"]["trained"] is True
+    assert payload["model"]["metrics"]["f1"] >= 0.8
     assert "not evidence" in payload["disclaimer"].lower()
+
+
+def test_trained_model_separates_injected_demo_scenario() -> None:
+    nominal = client.get("/api/v1/flights/ae0001/anomaly").json()
+    injected = client.get("/api/v1/flights/ae0003/anomaly").json()
+
+    assert nominal["label"] == "nominal"
+    assert injected["label"] == "unusual"
+    assert injected["score"] > nominal["score"]
 
 
 def test_digital_twin_keeps_simulated_data_separate() -> None:
@@ -160,3 +183,30 @@ def test_intelligence_report_uses_tools_without_claiming_llm() -> None:
     assert payload["tool_log"]
     assert payload["llm_configured"] is False
     assert payload["limitations"]
+
+
+def test_analysis_endpoints_return_not_found_consistently() -> None:
+    assert client.get("/api/v1/flights/ffffff/prediction").status_code == 404
+    assert client.get("/api/v1/flights/ffffff/anomaly").status_code == 404
+    assert (
+        client.post(
+            "/api/v1/simulations",
+            json={"icao24": "ffffff", "anomaly_type": "speed_drop", "severity": 0.5},
+        ).status_code
+        == 404
+    )
+    assert (
+        client.post(
+            "/api/v1/intelligence/reports", json={"icao24": "ffffff", "include_weather": False}
+        ).status_code
+        == 404
+    )
+
+
+def test_analytics_summary_is_explicitly_synthetic() -> None:
+    response = client.get("/api/v1/analytics/summary")
+
+    assert response.status_code == 200
+    assert response.json()["aircraft_count"] == 4
+    assert response.json()["unusual_count"] == 1
+    assert response.json()["classification"] == "synthetic_demo"

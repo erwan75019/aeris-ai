@@ -187,7 +187,7 @@ export default function RadarPage() {
               )}
               <div className="map-legend">
                 <span><i className="observed-line" />Observed</span>
-                <span><i className="predicted-line" />Baseline projection</span>
+                <span><i className="predicted-line" />Model projection</span>
               </div>
               <div className="non-operational">Research display · not for operational use</div>
             </div>

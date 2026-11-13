@@ -38,7 +38,7 @@ export function FlightInspector({
         <span className="eyebrow">Flight inspector</span>
         <div className="empty-radar-icon" aria-hidden="true" />
         <h2>Select an aircraft</h2>
-        <p>Choose a radar target to inspect its observed track, baseline projection and anomaly factors.</p>
+        <p>Choose a radar target to inspect its observed track, model projection and anomaly factors.</p>
       </aside>
     );
   }

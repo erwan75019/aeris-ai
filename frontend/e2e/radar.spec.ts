@@ -27,7 +27,7 @@ test("radar loads real API data and supports the critical analysis journey", asy
   await expect(aircraft).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { name: "AER101" })).toBeVisible();
-  await expect(page.getByText("constant velocity baseline")).toBeVisible();
+  await expect(page.getByText(/transformer · uncertainty/)).toBeVisible();
 
   await page.getByRole("button", { name: "Analyze flight" }).click();
   await expect(page.getByText(/Track contains 61 synthetic_demo states/)).toBeVisible();

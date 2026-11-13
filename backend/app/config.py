@@ -1,6 +1,7 @@
 """Application configuration loaded from environment variables."""
 
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -26,6 +27,8 @@ class Settings(BaseSettings):
     opensky_client_secret: str | None = None
     llm_provider: str | None = None
     llm_model: str | None = None
+    anomaly_artifact_dir: Path = Path("artifacts/models/anomaly")
+    trajectory_artifact_dir: Path = Path("artifacts/models/trajectory")
 
     @property
     def llm_configured(self) -> bool:

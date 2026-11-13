@@ -37,9 +37,9 @@ class IntelligenceService:
             ToolLogEntry(tool="flight_history", status="ok", detail=f"{len(track.points)} points"),
             ToolLogEntry(tool="anomaly_baseline", status="ok", detail=f"score={anomaly.score:.3f}"),
             ToolLogEntry(
-                tool="trajectory_baseline",
+                tool="trajectory_prediction",
                 status="ok",
-                detail=f"{len(prediction.points)} horizons",
+                detail=f"{prediction.model.name}: {len(prediction.points)} horizons",
             ),
         ]
         if request.include_weather:
@@ -62,8 +62,9 @@ class IntelligenceService:
         ]
         predictions = [
             (
-                f"Constant-vector baseline projects the 15-minute point to "
-                f"{prediction.points[-1].latitude:.3f}, {prediction.points[-1].longitude:.3f}."
+                f"{prediction.model.name.replace('_', ' ').title()} projects the 15-minute "
+                f"point to {prediction.points[-1].latitude:.3f}, "
+                f"{prediction.points[-1].longitude:.3f}."
             )
         ]
         return IntelligenceResponse(
@@ -78,7 +79,11 @@ class IntelligenceService:
             ],
             limitations=[
                 "Demo data are synthetic and cannot support claims about real aircraft.",
-                "The current predictor is a kinematic baseline, not a trained neural model.",
+                (
+                    "The trajectory predictor is trained only on synthetic maneuvers."
+                    if prediction.model.trained
+                    else "The current trajectory result uses the kinematic fallback."
+                ),
             ],
             tool_log=tools,
             generated_at=datetime.now(UTC),

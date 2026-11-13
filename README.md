@@ -16,6 +16,11 @@ analysis tools.
 - UTC flight replay with play/pause, speed and timeline controls
 - Observed tracks and 5/10/15-minute constant-velocity predictions
 - Explainable anomaly evidence, scenario simulation and intelligence reports
+- A checksum-verified Isolation Forest trained/evaluated on labelled synthetic
+  scenarios, with an automatic transparent-rule fallback
+- LSTM/GRU/Transformer training with early stopping and flight-disjoint temporal
+  splits; the selected Transformer improves synthetic held-out mean MAE from
+  6.35 km (constant-vector baseline) to 3.45 km
 - Responsive desktop/tablet/mobile interface with keyboard and screen-reader
   support
 - Typed FastAPI contracts, strict TypeScript, 90%+ backend coverage, E2E and
@@ -90,7 +95,9 @@ pyproject.toml  Python package, tool configuration and dependency ranges
 ```
 
 Read [the architecture](docs/architecture.md), [data-source policy](docs/data-sources.md),
-[design contract](docs/design-contract.md), and [delivery roadmap](docs/roadmap.md).
+[anomaly model card](docs/ml-anomaly.md), [trajectory model card](docs/dl-trajectory.md),
+[design contract](docs/design-contract.md),
+and [delivery roadmap](docs/roadmap.md).
 
 ## Configuration
 

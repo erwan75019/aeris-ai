@@ -22,10 +22,12 @@ htmlcov/
 # Machine Learning
 mlruns/
 *.pt
+!artifacts/models/**/*.pt
 *.pth
 *.ckpt
 *.pkl
 *.joblib
+!artifacts/models/**/*.joblib
 
 # Datasets
 data/raw/

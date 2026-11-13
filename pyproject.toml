@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "AI-powered airspace intelligence platform"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
 authors = [{ name = "erwan75019" }]
 dependencies = [
   "fastapi>=0.115,<1",
@@ -65,4 +65,12 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 python_version = "3.11"
 strict = true
 plugins = ["pydantic.mypy"]
+
+[tool.coverage.run]
+source = ["backend"]
+omit = [
+  "backend/migrations/*",
+  "backend/scripts/*",
+  "backend/tests/*",
+]
 

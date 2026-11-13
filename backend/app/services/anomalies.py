@@ -1,19 +1,46 @@
-"""Transparent statistical anomaly baseline."""
+"""Transparent baseline with an optional integrity-checked trained model."""
 
 from datetime import datetime
+from pathlib import Path
 
 from backend.app.schemas.flight import AnomalyResponse, ModelDescriptor
 from backend.app.services.flights import FlightService
 from backend.app.services.geo import smallest_heading_delta
+from backend.ml.artifacts import ArtifactIntegrityError, IsolationForestArtifact
 
 
 class AnomalyService:
-    def __init__(self, flights: FlightService) -> None:
+    def __init__(self, flights: FlightService, artifact_dir: Path | None = None) -> None:
         self.flights = flights
+        self.artifact: IsolationForestArtifact | None = None
+        if artifact_dir is not None:
+            try:
+                self.artifact = IsolationForestArtifact(artifact_dir)
+            except (FileNotFoundError, KeyError, ValueError, ArtifactIntegrityError):
+                self.artifact = None
 
     def evaluate(self, icao24: str, *, at: datetime | None = None) -> AnomalyResponse:
         track = self.flights.get_track(icao24, at=at)
         recent = track.points[-40:]
+        if self.artifact is not None:
+            prediction = self.artifact.predict(recent)
+            return AnomalyResponse(
+                icao24=track.icao24,
+                score=prediction.score,
+                label="unusual" if prediction.label == "unusual" else "nominal",
+                classification=track.data_classification,
+                factors=prediction.factors,
+                model=ModelDescriptor(
+                    name=prediction.model_name,
+                    version=prediction.model_version,
+                    trained=True,
+                    metrics=prediction.metrics,
+                ),
+                disclaimer=(
+                    "This model was evaluated only on injected synthetic scenarios. A statistical "
+                    "anomaly is not evidence of an incident, unsafe operation, or causality."
+                ),
+            )
         heading_changes = [
             abs(smallest_heading_delta(previous.heading_deg, current.heading_deg))
             for previous, current in zip(recent, recent[1:], strict=False)
