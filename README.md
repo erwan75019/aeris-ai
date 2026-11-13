@@ -49,7 +49,7 @@ Requirements: Python 3.11+, Node.js 22+ and npm.
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e '.[dev,database,ml]'
+python -m pip install -e '.[dev,database,ml,dl]'
 npm --prefix frontend ci
 pre-commit install
 ```
