@@ -21,6 +21,9 @@ analysis tools.
 - LSTM/GRU/Transformer training with early stopping and flight-disjoint temporal
   splits; the selected Transformer improves synthetic held-out mean MAE from
   6.35 km (constant-vector baseline) to 3.45 km
+- Four tool-driven intelligence specialists with optional local Ollama narration
+- Optional OpenSky live vectors and Aviation Weather Center METAR connectors,
+  both rate-aware and disabled from the reproducible offline path
 - Responsive desktop/tablet/mobile interface with keyboard and screen-reader
   support
 - Typed FastAPI contracts, strict TypeScript, 90%+ backend coverage, E2E and
@@ -96,7 +99,7 @@ pyproject.toml  Python package, tool configuration and dependency ranges
 
 Read [the architecture](docs/architecture.md), [data-source policy](docs/data-sources.md),
 [anomaly model card](docs/ml-anomaly.md), [trajectory model card](docs/dl-trajectory.md),
-[design contract](docs/design-contract.md),
+[AERIS Intelligence](docs/intelligence.md), [design contract](docs/design-contract.md),
 and [delivery roadmap](docs/roadmap.md).
 
 ## Configuration

@@ -5,6 +5,8 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Path, Query, status
 from pydantic import AwareDatetime
 
+from backend.app.providers.opensky import OpenSkyError
+from backend.app.providers.weather import WeatherNotFoundError, WeatherProviderError
 from backend.app.schemas.flight import (
     AnomalyResponse,
     FlightListResponse,
@@ -15,6 +17,7 @@ from backend.app.schemas.flight import (
     SimulationRequest,
     SimulationResponse,
 )
+from backend.app.schemas.weather import WeatherObservation
 from backend.app.services.container import services
 from backend.app.services.flights import FlightNotFoundError, ReplayTimeOutOfRangeError
 
@@ -53,6 +56,8 @@ def list_flights(
         return services.flights.list_flights(at=at, bbox=bbox)
     except ReplayTimeOutOfRangeError as exc:
         raise _replay_error(exc) from exc
+    except OpenSkyError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/flights/{icao24}/track", response_model=FlightTrackResponse)
@@ -123,5 +128,17 @@ def analytics_summary() -> dict[str, object]:
         "aircraft_count": len(flights.data),
         "mean_altitude_ft": round(sum(altitudes) / len(altitudes), 1) if altitudes else None,
         "unusual_count": sum(item.label == "unusual" for item in anomalies),
-        "classification": "synthetic_demo",
+        "classification": flights.meta.data_classification,
     }
+
+
+@router.get("/weather/stations/{station}", response_model=WeatherObservation)
+def station_weather(
+    station: Annotated[str, Path(pattern=r"^[A-Za-z0-9]{4}$")],
+) -> WeatherObservation:
+    try:
+        return services.weather.metar(station)
+    except WeatherNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except WeatherProviderError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc

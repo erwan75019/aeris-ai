@@ -16,6 +16,15 @@ export interface IntelligenceReport {
   hypotheses: string[];
   limitations: string[];
   tool_log: Array<{ tool: string; status: string; detail: string }>;
+  agent_findings: Array<{
+    agent: string;
+    status: "complete" | "limited" | "failed";
+    facts: string[];
+    predictions: string[];
+    hypotheses: string[];
+    limitations: string[];
+  }>;
+  narrative: string | null;
   generated_at: string;
 }
 

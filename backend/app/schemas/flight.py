@@ -112,9 +112,19 @@ class IntelligenceRequest(BaseModel):
 
 
 class ToolLogEntry(BaseModel):
+    agent: str | None = None
     tool: str
     status: Literal["ok", "unavailable", "error"]
     detail: str
+
+
+class AgentFinding(BaseModel):
+    agent: str
+    status: Literal["complete", "limited", "failed"]
+    facts: list[str] = Field(default_factory=list)
+    predictions: list[str] = Field(default_factory=list)
+    hypotheses: list[str] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
 
 
 class IntelligenceResponse(BaseModel):
@@ -126,4 +136,6 @@ class IntelligenceResponse(BaseModel):
     hypotheses: list[str]
     limitations: list[str]
     tool_log: list[ToolLogEntry]
+    agent_findings: list[AgentFinding]
+    narrative: str | None = None
     generated_at: datetime

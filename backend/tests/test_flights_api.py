@@ -3,6 +3,9 @@ from datetime import UTC, datetime
 from fastapi.testclient import TestClient
 
 from backend.app.main import app
+from backend.app.providers.weather import WeatherNotFoundError, WeatherProviderError
+from backend.app.schemas.weather import WeatherObservation
+from backend.app.services.container import services
 
 client = TestClient(app)
 
@@ -181,6 +184,7 @@ def test_intelligence_report_uses_tools_without_claiming_llm() -> None:
     assert payload["facts"]
     assert payload["predictions"]
     assert payload["tool_log"]
+    assert len(payload["agent_findings"]) == 4
     assert payload["llm_configured"] is False
     assert payload["limitations"]
 
@@ -210,3 +214,36 @@ def test_analytics_summary_is_explicitly_synthetic() -> None:
     assert response.json()["aircraft_count"] == 4
     assert response.json()["unusual_count"] == 1
     assert response.json()["classification"] == "synthetic_demo"
+
+
+def test_weather_endpoint_returns_typed_provider_observation(monkeypatch: object) -> None:
+    observation = WeatherObservation(
+        station="LFPG",
+        observed_at=datetime(2026, 11, 13, 18, tzinfo=UTC),
+        wind_direction_deg=240,
+        wind_speed_kt=12,
+        source="aviation_weather_center",
+        data_classification="live",
+    )
+    monkeypatch.setattr(services.weather, "metar", lambda _station: observation)  # type: ignore[attr-defined]
+
+    response = client.get("/api/v1/weather/stations/LFPG")
+
+    assert response.status_code == 200
+    assert response.json()["source"] == "aviation_weather_center"
+    assert response.json()["data_classification"] == "live"
+
+
+def test_weather_endpoint_maps_not_found_and_provider_errors(monkeypatch: object) -> None:
+    def not_found(_station: str) -> WeatherObservation:
+        raise WeatherNotFoundError("No recent METAR for LFPG")
+
+    monkeypatch.setattr(services.weather, "metar", not_found)  # type: ignore[attr-defined]
+    assert client.get("/api/v1/weather/stations/LFPG").status_code == 404
+
+    def unavailable(_station: str) -> WeatherObservation:
+        raise WeatherProviderError("rate limited")
+
+    monkeypatch.setattr(services.weather, "metar", unavailable)  # type: ignore[attr-defined]
+    assert client.get("/api/v1/weather/stations/LFPG").status_code == 503
+    assert client.get("/api/v1/weather/stations/TOO-LONG").status_code == 422

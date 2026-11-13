@@ -31,6 +31,7 @@ test("radar loads real API data and supports the critical analysis journey", asy
 
   await page.getByRole("button", { name: "Analyze flight" }).click();
   await expect(page.getByText(/Track contains 61 synthetic_demo states/)).toBeVisible();
+  await expect(page.locator(".agent-strip span")).toHaveCount(4);
 
   await page.getByLabel("Replay minute").fill("30");
   await expect(page.getByText("12:30:00 UTC", { exact: true }).first()).toBeVisible();

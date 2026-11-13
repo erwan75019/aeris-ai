@@ -92,7 +92,17 @@ export function FlightInspector({
       <section className="inspector-section intelligence-summary">
         <div className="section-title"><span>AERIS Intelligence</span><em>Offline-ready</em></div>
         {report ? (
-          <ul>{report.facts.slice(0, 3).map((fact) => <li key={fact}>{fact}</li>)}</ul>
+          <>
+            <div className="agent-strip" aria-label="Specialist agent status">
+              {report.agent_findings.map((finding) => (
+                <span key={finding.agent} className={finding.status}>
+                  {finding.agent.replaceAll("_", " ")}
+                </span>
+              ))}
+            </div>
+            <ul>{report.facts.slice(0, 3).map((fact) => <li key={fact}>{fact}</li>)}</ul>
+            {report.narrative && <p className="agent-narrative">{report.narrative}</p>}
+          </>
         ) : (
           <p className="muted-copy">Run the tool-based analyst. No LLM is required and every call is logged.</p>
         )}
