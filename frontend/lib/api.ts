@@ -6,6 +6,7 @@ import type {
   SimulationAnomaly,
   SimulationResponse,
   AnalyticsSummary,
+  DensityForecastResponse,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -93,4 +94,8 @@ export function createSimulation(
 
 export function getAnalyticsSummary(): Promise<AnalyticsSummary> {
   return request<AnalyticsSummary>("/api/v1/analytics/summary");
+}
+
+export function getDensityForecast(): Promise<DensityForecastResponse> {
+  return request<DensityForecastResponse>("/api/v1/analytics/density-forecast");
 }

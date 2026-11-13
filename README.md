@@ -22,6 +22,8 @@ Digital Twin and analytics screenshots are available in [`docs/qa`](docs/qa/).
 - Digital Twin workspace with injected anomalies, synthetic wind, before/after
   anomaly scores and comparative Transformer forecasts
 - Analytics workspace backed by live API summary and normalized flight telemetry
+- Trained 15/30/60-minute Random Forest density forecast that improves synthetic
+  held-out mean MAE from 2.63 to 1.88 aircraft versus persistence
 - A checksum-verified Isolation Forest trained/evaluated on labelled synthetic
   scenarios, with an automatic transparent-rule fallback
 - LSTM/GRU/Transformer training with early stopping and flight-disjoint temporal
@@ -37,7 +39,7 @@ Digital Twin and analytics screenshots are available in [`docs/qa`](docs/qa/).
 - Docker Compose stack with Next.js, FastAPI and PostgreSQL/PostGIS
 
 The project never labels a heuristic as ML or deterministic text as an LLM
-answer. Planned learned models must beat the documented baselines before use.
+answer. Learned models must beat documented baselines before promotion.
 
 ## Quick start
 
@@ -105,6 +107,7 @@ pyproject.toml  Python package, tool configuration and dependency ranges
 
 Read [the architecture](docs/architecture.md), [data-source policy](docs/data-sources.md),
 [anomaly model card](docs/ml-anomaly.md), [trajectory model card](docs/dl-trajectory.md),
+[density model card](docs/ml-density.md),
 [AERIS Intelligence](docs/intelligence.md), [design contract](docs/design-contract.md),
 and [delivery roadmap](docs/roadmap.md).
 

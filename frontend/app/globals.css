@@ -148,7 +148,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .predicted-line { border-top: 2px dashed var(--amber); }
 .scenario-line { border-top: 2px dashed var(--red); }
 .scenario-prediction-line { border-top: 2px dotted #c58cff; }
-.non-operational { position: absolute; right: 14px; bottom: 12px; color: #647983; font: 9px var(--font-mono), monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+.non-operational { position: absolute; right: 14px; bottom: 12px; color: #78909c; font: 9px var(--font-mono), monospace; letter-spacing: 0.06em; text-transform: uppercase; }
 .loading-state, .empty-state, .map-fallback { position: absolute; left: 50%; top: 50%; z-index: 4; transform: translate(-50%, -50%); border: 1px solid var(--line-strong); border-radius: 5px; background: rgba(5, 14, 20, 0.92); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); }
 .loading-state { display: flex; align-items: center; gap: 10px; padding: 10px 14px; color: var(--muted-bright); font-size: 11px; }
 .loading-state i { width: 8px; height: 8px; border: 1px solid var(--cyan); border-radius: 50%; animation: pulse 1s ease infinite; }
@@ -232,6 +232,12 @@ input[type="range"] { width: 100%; height: 3px; accent-color: var(--cyan); curso
 .chart-card h2 { margin: 9px 0 5px; font-size: 18px; font-weight: 540; }
 .chart-card p { margin: 0; color: var(--muted); font-size: 10px; }
 .chart-frame { min-width: 0; min-height: 270px; }
+.density-card { min-height: 340px; }
+.density-summary { display: grid; grid-template-columns: auto auto 18px auto auto; align-items: end; gap: 6px; margin-top: 28px; }
+.density-summary strong { color: var(--cyan); font: 22px var(--font-mono), monospace; font-weight: 500; }
+.density-summary span { padding-bottom: 4px; color: var(--muted); font-size: 8px; text-transform: uppercase; }
+.density-summary i { align-self: center; color: var(--amber); font-style: normal; }
+.chart-card .forecast-limit { margin-top: 18px; line-height: 1.5; }
 .analytics-table { margin-top: 14px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); }
 .analytics-row { display: grid; grid-template-columns: 1.2fr repeat(3, 1fr); padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--muted-bright); font: 11px var(--font-mono), monospace; }
 .analytics-row:last-child { border-bottom: 0; }

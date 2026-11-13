@@ -249,6 +249,21 @@ def test_analytics_summary_is_explicitly_synthetic() -> None:
     assert response.json()["classification"] == "synthetic_demo"
 
 
+def test_density_forecast_exposes_trained_model_and_baseline() -> None:
+    response = client.get("/api/v1/analytics/density-forecast")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["current_aircraft"] == 4
+    assert payload["classification"] == "synthetic_demo"
+    assert payload["model"]["name"] == "random_forest_density"
+    assert payload["model"]["trained"] is True
+    assert len(payload["points"]) == 3
+    assert [point["horizon_minutes"] for point in payload["points"]] == [15, 30, 60]
+    assert all(point["test_mae_aircraft"] > 0 for point in payload["points"])
+    assert "synthetic" in payload["disclaimer"].lower()
+
+
 def test_weather_endpoint_returns_typed_provider_observation(monkeypatch: object) -> None:
     observation = WeatherObservation(
         station="LFPG",

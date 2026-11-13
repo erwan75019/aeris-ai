@@ -12,12 +12,13 @@
 - API/unit/browser/accessibility tests, Docker images and CI
 - PostGIS schema/migration and idempotent observation ingestion
 - Versioned Isolation Forest plus LSTM/GRU/Transformer experiments and model cards
+- Versioned Random Forest traffic-density forecast with a persistence benchmark
 
 ## Next production increments
 
 1. Licensed historical dataset snapshots and a real-data licence review
 2. Shadow evaluation, drift monitoring and artifact rollback controls
-3. Traffic-density forecasting with calibrated spatial/temporal evaluation
+3. Spatially segmented density calibration on licensed historical observations
 4. Authentication, tenant isolation, audit trails and distributed rate limiting
 5. Observability, backups, restore drills and production deployment manifests
 

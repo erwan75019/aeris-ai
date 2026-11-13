@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     llm_api_key: str | None = None
     anomaly_artifact_dir: Path = Path("artifacts/models/anomaly")
     trajectory_artifact_dir: Path = Path("artifacts/models/trajectory")
+    density_artifact_dir: Path = Path("artifacts/models/density")
 
     @property
     def llm_configured(self) -> bool:

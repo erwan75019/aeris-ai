@@ -113,6 +113,10 @@ test("analytics renders API metrics and telemetry", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Airspace Analytics" })).toBeVisible();
   await expect(page.locator(".metric-row article").first()).toContainText("4");
   await expect(page.getByRole("img", { name: "Aircraft altitude bar chart" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Regional traffic density" })).toBeVisible();
+  await expect(page.getByText("random forest density")).toBeVisible();
+  await expect(page.getByRole("img", { name: "Regional traffic density forecast chart" })).toBeVisible();
+  await expect(page.getByText(/Held-out synthetic MAE/)).toBeVisible();
   await expect(page.locator(".analytics-row")).toHaveCount(5);
   await expect(page.getByRole("link", { name: /Radar/ })).toHaveAttribute("href", "/");
 

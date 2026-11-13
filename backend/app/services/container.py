@@ -8,6 +8,7 @@ from backend.app.providers.demo import DemoFlightProvider
 from backend.app.providers.opensky import OpenSkyClient, OpenSkyFlightProvider
 from backend.app.providers.weather import AviationWeatherClient, WeatherService
 from backend.app.services.anomalies import AnomalyService
+from backend.app.services.density import DensityService
 from backend.app.services.flights import FlightService
 from backend.app.services.intelligence import IntelligenceService
 from backend.app.services.predictions import PredictionService
@@ -22,6 +23,7 @@ class ServiceContainer:
     simulations: SimulationService
     intelligence: IntelligenceService
     weather: WeatherService
+    density: DensityService
 
 
 def build_services() -> ServiceContainer:
@@ -47,6 +49,7 @@ def build_services() -> ServiceContainer:
         simulations=SimulationService(flights, anomalies, predictions),
         intelligence=IntelligenceService(flights, anomalies, predictions, weather, settings),
         weather=weather,
+        density=DensityService(flights, settings.density_artifact_dir),
     )
 
 

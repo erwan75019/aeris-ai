@@ -1,20 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import { AppRail } from "@/components/AppRail";
-import { getAnalyticsSummary, getFlights } from "@/lib/api";
-import type { AnalyticsSummary, FlightState } from "@/lib/types";
+import { getAnalyticsSummary, getDensityForecast, getFlights } from "@/lib/api";
+import type { AnalyticsSummary, DensityForecastResponse, FlightState } from "@/lib/types";
 
 export default function AnalyticsPage() {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const [density, setDensity] = useState<DensityForecastResponse | null>(null);
   const [flights, setFlights] = useState<FlightState[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getAnalyticsSummary(), getFlights()])
-      .then(([nextSummary, response]) => { setSummary(nextSummary); setFlights(response.data); })
+    Promise.all([getAnalyticsSummary(), getDensityForecast(), getFlights()])
+      .then(([nextSummary, nextDensity, response]) => {
+        setSummary(nextSummary);
+        setDensity(nextDensity);
+        setFlights(response.data);
+      })
       .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "Analytics unavailable"));
   }, []);
 
@@ -23,6 +39,18 @@ export default function AnalyticsPage() {
     altitude: Math.round((flight.altitude_ft ?? 0) / 100) / 10,
     speed: flight.ground_speed_kt ?? 0,
   }));
+  const densityChart = density ? [
+    {
+      horizon: "Now",
+      forecast: density.current_aircraft,
+      persistence: density.current_aircraft,
+    },
+    ...density.points.map((point) => ({
+      horizon: `+${point.horizon_minutes}m`,
+      forecast: point.predicted_aircraft,
+      persistence: point.persistence_baseline_aircraft,
+    })),
+  ] : [];
 
   return (
     <main className="app-shell">
@@ -45,7 +73,33 @@ export default function AnalyticsPage() {
                 height="100%"
                 initialDimension={{ width: 720, height: 270 }}
               >
-                <BarChart data={chart}><CartesianGrid stroke="rgba(135,181,199,.12)" vertical={false} /><XAxis dataKey="callsign" stroke="#78909c" fontSize={10} /><YAxis stroke="#78909c" fontSize={10} unit="k" /><Tooltip contentStyle={{ background: "#09121a", border: "1px solid rgba(135,181,199,.27)" }} /><Bar dataKey="altitude" fill="#57e1ff" radius={[3, 3, 0, 0]} /></BarChart>
+                <BarChart data={chart}><CartesianGrid stroke="rgba(135,181,199,.12)" vertical={false} /><XAxis dataKey="callsign" stroke="#78909c" fontSize={10} /><YAxis stroke="#78909c" fontSize={10} unit="k" /><Tooltip contentStyle={{ background: "#09121a", border: "1px solid rgba(135,181,199,.27)" }} /><Bar dataKey="altitude" fill="#57e1ff" radius={[3, 3, 0, 0]} isAnimationActive={false} /></BarChart>
+              </ResponsiveContainer>
+            </div>
+          </section>
+          <section className="chart-card density-card">
+            <div>
+              <span className="eyebrow">Experimental forecast</span>
+              <h2>Regional traffic density</h2>
+              <p>{density?.model.name.replaceAll("_", " ") ?? "Loading model"}</p>
+              {density && <div className="density-summary"><strong>{density.current_aircraft}</strong><span>now</span><i>→</i><strong>{density.points.at(-1)?.predicted_aircraft.toFixed(1)}</strong><span>in 60 min</span></div>}
+              {density && <p className="forecast-limit">Held-out synthetic MAE ±{density.points.at(-1)?.test_mae_aircraft?.toFixed(2)} aircraft. Not a capacity prediction.</p>}
+            </div>
+            <div className="chart-frame" aria-label="Regional traffic density forecast chart" role="img">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+                initialDimension={{ width: 720, height: 270 }}
+              >
+                <LineChart data={densityChart}>
+                  <CartesianGrid stroke="rgba(135,181,199,.12)" vertical={false} />
+                  <XAxis dataKey="horizon" stroke="#78909c" fontSize={10} />
+                  <YAxis stroke="#78909c" fontSize={10} allowDecimals={false} />
+                  <Tooltip contentStyle={{ background: "#09121a", border: "1px solid rgba(135,181,199,.27)" }} />
+                  <Legend wrapperStyle={{ fontSize: 9, textTransform: "uppercase" }} />
+                  <Line name="Random Forest" type="monotone" dataKey="forecast" stroke="#57e1ff" strokeWidth={2.5} dot={{ r: 3 }} isAnimationActive={false} />
+                  <Line name="Persistence" type="monotone" dataKey="persistence" stroke="#f3b663" strokeDasharray="4 4" dot={false} isAnimationActive={false} />
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </section>

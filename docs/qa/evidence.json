@@ -59,7 +59,7 @@
     {
       "viewport": "1440x900",
       "artifact": "analytics-1440x900.png",
-      "observation": "Analytics renders API-derived counts, anomaly totals, altitude chart and normalized aircraft telemetry with explicit synthetic provenance."
+      "observation": "Analytics renders API-derived counts, anomaly totals, altitude telemetry and a trained 15/30/60-minute density forecast against persistence, all with explicit synthetic provenance."
     }
   ]
 }

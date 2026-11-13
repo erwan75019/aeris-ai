@@ -97,3 +97,23 @@ export interface AnalyticsSummary {
   unusual_count: number;
   classification: DataClassification;
 }
+
+export interface DensityForecastResponse {
+  generated_at: string;
+  current_aircraft: number;
+  points: Array<{
+    horizon_minutes: number;
+    timestamp: string;
+    predicted_aircraft: number;
+    persistence_baseline_aircraft: number;
+    test_mae_aircraft: number | null;
+  }>;
+  model: {
+    name: string;
+    version: string;
+    trained: boolean;
+    metrics: Record<string, number> | null;
+  };
+  classification: DataClassification;
+  disclaimer: string;
+}

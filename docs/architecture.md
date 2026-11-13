@@ -1,8 +1,9 @@
 # Architecture
 
 AERIS AI currently ships as a testable vertical slice with an offline,
-deterministic flight provider. It exercises the full user journey without
-pretending that external aviation data, a trained model, or an LLM is present.
+deterministic flight provider and three integrity-checked learned artifacts. It
+exercises the full user journey without pretending that synthetic evaluation
+is external aviation validation or that a local LLM is configured.
 
 ```text
 Browser (Next.js + MapLibre)
@@ -12,7 +13,7 @@ Browser (Next.js + MapLibre)
 FastAPI routes -> application services -> FlightProvider protocol
                          |                    |
                          |                    +-- deterministic demo provider
-                         +-- prediction, anomaly, simulation, report tools
+                         +-- trajectory, anomaly, density, simulation, agent tools
 
 PostgreSQL/PostGIS is provisioned by Compose for the persistence increment.
 It is not required by the offline demo provider.
@@ -35,13 +36,16 @@ It is not required by the offline demo provider.
 
 - Prediction: an integrity-checked Transformer at 5, 10 and 15 minutes when at
   least 20 observations exist, with a deterministic constant-velocity fallback.
-- Anomaly detection: transparent, named domain rules with evidence and scores.
+- Anomaly detection: promoted Isolation Forest with named evidence and a
+  transparent-rules fallback.
+- Density: promoted Random Forest forecasts at 15, 30 and 60 minutes with a
+  persistence baseline and held-out count errors.
 - Intelligence: deterministic tool orchestration that cites the evidence used.
   It does not claim to be an LLM response when no LLM is configured.
 - Simulation: bounded wind/heading/speed scenarios derived from the selected
   flight state.
 
-Both learned artifacts are versioned, checksum-verified and promoted only for
+All learned artifacts are versioned, checksum-verified and promoted only for
 the synthetic demo. Their held-out metrics and limitations are model cards, not
 claims about real-world aviation performance.
 

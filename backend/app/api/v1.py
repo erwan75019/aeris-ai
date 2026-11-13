@@ -7,6 +7,7 @@ from pydantic import AwareDatetime
 
 from backend.app.providers.opensky import OpenSkyError
 from backend.app.providers.weather import WeatherNotFoundError, WeatherProviderError
+from backend.app.schemas.analytics import AnalyticsSummary, DensityForecastResponse
 from backend.app.schemas.flight import (
     AnomalyResponse,
     FlightListResponse,
@@ -119,17 +120,25 @@ def create_intelligence_report(payload: IntelligenceRequest) -> IntelligenceResp
         raise _replay_error(exc) from exc
 
 
-@router.get("/analytics/summary")
-def analytics_summary() -> dict[str, object]:
+@router.get("/analytics/summary", response_model=AnalyticsSummary)
+def analytics_summary() -> AnalyticsSummary:
     flights = services.flights.list_flights()
     anomalies = [services.anomalies.evaluate(item.icao24) for item in flights.data]
     altitudes = [item.altitude_ft for item in flights.data if item.altitude_ft is not None]
-    return {
-        "aircraft_count": len(flights.data),
-        "mean_altitude_ft": round(sum(altitudes) / len(altitudes), 1) if altitudes else None,
-        "unusual_count": sum(item.label == "unusual" for item in anomalies),
-        "classification": flights.meta.data_classification,
-    }
+    return AnalyticsSummary(
+        aircraft_count=len(flights.data),
+        mean_altitude_ft=round(sum(altitudes) / len(altitudes), 1) if altitudes else None,
+        unusual_count=sum(item.label == "unusual" for item in anomalies),
+        classification=flights.meta.data_classification,
+    )
+
+
+@router.get("/analytics/density-forecast", response_model=DensityForecastResponse)
+def density_forecast() -> DensityForecastResponse:
+    try:
+        return services.density.forecast()
+    except OpenSkyError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/weather/stations/{station}", response_model=WeatherObservation)
