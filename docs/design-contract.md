@@ -8,6 +8,8 @@
   provenance, time, altitude and anomaly context before decorative metrics.
 - **Primary action:** select an aircraft on the radar or in search, then inspect
   its observed track and experimental projection.
+- **Navigation aids:** geographic sector filters, explicit static airport focus
+  and 2D/3D perspective controls remain secondary to aircraft analysis.
 - **Tone:** dense, calm, technical and operational, without imitating a certified
   air-traffic-control display.
 - **Memorable detail:** concentric cyan range rings and a continuous timeline make

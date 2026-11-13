@@ -9,6 +9,11 @@ tests and screenshots reproducible and safe to redistribute.
 Every flight response exposes `source: "synthetic_demo"`. The interface must
 continue to surface provenance when a real provider is added.
 
+The radar also includes three approximate WGS84 airport reference points
+(LFPG, LFPO and LFBO) for map navigation. They are versioned UI reference data,
+explicitly labelled `static_reference`, and must not be used for navigation,
+runway geometry or operational aerodrome information.
+
 ## OpenSky Network
 
 `OpenSkyFlightProvider` implements `/states/all`, including bbox/time filters,

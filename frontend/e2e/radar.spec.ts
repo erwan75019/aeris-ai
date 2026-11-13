@@ -36,6 +36,16 @@ test("radar loads real API data and supports the critical analysis journey", asy
   await page.getByLabel("Replay minute").fill("30");
   await expect(page.getByText("12:30:00 UTC", { exact: true }).first()).toBeVisible();
 
+  await search.fill("");
+  await page.getByLabel("Geographic zone").selectOption("west");
+  await expect(page.locator(".aircraft-marker")).toHaveCount(1);
+  await page.getByLabel("Geographic zone").selectOption("all");
+  await expect(page.locator(".aircraft-marker")).toHaveCount(4);
+  await page.getByLabel("Airport reference").selectOption("LFPG");
+  await expect(page.getByRole("img", { name: /LFPG Paris Charles de Gaulle static reference/ })).toBeVisible();
+  await page.getByRole("button", { name: "3D", exact: true }).click();
+  await expect(page.locator(".radar-map")).toHaveAttribute("data-view-mode", "3d");
+
   const accessibility = await new AxeBuilder({ page }).analyze();
   const blockingViolations = accessibility.violations.filter((item) =>
     item.impact === "critical" || item.impact === "serious"

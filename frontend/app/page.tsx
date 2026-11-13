@@ -14,6 +14,7 @@ import {
   type IntelligenceReport,
 } from "@/lib/api";
 import { formatUtc } from "@/lib/format";
+import { AIRPORTS, AIRSPACE_ZONES, type AirspaceZone } from "@/lib/reference";
 import type {
   AnomalyResponse,
   FlightListResponse,
@@ -38,6 +39,9 @@ export default function RadarPage() {
   const [reportState, setReportState] = useState<{ key: string; data: IntelligenceReport } | null>(null);
   const [reportBusyKey, setReportBusyKey] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [zone, setZone] = useState<AirspaceZone>("all");
+  const [airportIcao, setAirportIcao] = useState("");
+  const [viewMode, setViewMode] = useState<"2d" | "3d">("2d");
   const [minute, setMinute] = useState(60);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
@@ -101,11 +105,27 @@ export default function RadarPage() {
 
   const flights = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return response?.data ?? [];
-    return (response?.data ?? []).filter((flight) =>
-      flight.icao24.includes(query) || flight.callsign?.toLowerCase().includes(query)
-    );
-  }, [response, search]);
+    const bounds = AIRSPACE_ZONES[zone].bounds;
+    return (response?.data ?? []).filter((flight) => {
+      const matchesQuery = !query
+        || flight.icao24.includes(query)
+        || flight.callsign?.toLowerCase().includes(query);
+      const matchesZone = bounds === null || (
+        flight.longitude >= bounds[0]
+        && flight.latitude >= bounds[1]
+        && flight.longitude <= bounds[2]
+        && flight.latitude <= bounds[3]
+      );
+      return matchesQuery && matchesZone;
+    });
+  }, [response, search, zone]);
+
+  const selectedAirport = AIRPORTS.find((airport) => airport.icao === airportIcao) ?? null;
+
+  const clearFilters = () => {
+    setSearch("");
+    setZone("all");
+  };
 
   const selectedFlight: FlightState | null =
     response?.data.find((flight) => flight.icao24 === selectedIcao24) ?? null;
@@ -161,8 +181,10 @@ export default function RadarPage() {
                 />
                 {search && <button type="button" onClick={() => setSearch("")} aria-label="Clear search">×</button>}
               </label>
+              <label className="toolbar-select"><span>Zone</span><select aria-label="Geographic zone" value={zone} onChange={(event) => { setZone(event.target.value as AirspaceZone); setAirportIcao(""); setSelectedIcao24(null); }}>{Object.entries(AIRSPACE_ZONES).map(([value, item]) => <option key={value} value={value}>{item.label}</option>)}</select></label>
+              <label className="toolbar-select"><span>Airport</span><select aria-label="Airport reference" value={airportIcao} onChange={(event) => setAirportIcao(event.target.value)}><option value="">No airport</option>{AIRPORTS.map((airport) => <option key={airport.icao} value={airport.icao}>{airport.icao} · {airport.name}</option>)}</select></label>
+              <div className="view-toggle" aria-label="Map perspective"><button type="button" className={viewMode === "2d" ? "active" : ""} onClick={() => setViewMode("2d")}>2D</button><button type="button" className={viewMode === "3d" ? "active" : ""} onClick={() => setViewMode("3d")}>3D</button></div>
               <div className="traffic-metric"><strong>{flights.length}</strong><span>aircraft in view</span></div>
-              <div className="traffic-metric"><strong>{response?.meta.source ?? "—"}</strong><span>active source</span></div>
             </div>
 
             <div className="map-stage">
@@ -171,16 +193,19 @@ export default function RadarPage() {
                 selectedIcao24={selectedIcao24}
                 track={analysis?.track ?? null}
                 prediction={analysis?.prediction ?? null}
+                selectedAirport={selectedAirport}
+                viewMode={viewMode}
                 onSelect={setSelectedIcao24}
               />
               {loading && <div className="loading-state" role="status"><i />Updating positions…</div>}
               {!loading && !error && flights.length === 0 && (
-                <div className="empty-state" role="status"><strong>No aircraft in this view</strong><button type="button" onClick={() => setSearch("")}>Clear search</button></div>
+                <div className="empty-state" role="status"><strong>No aircraft in this view</strong><button type="button" onClick={clearFilters}>Clear filters</button></div>
               )}
               <div className="map-legend">
                 <span><i className="observed-line" />Observed</span>
                 <span><i className="predicted-line" />Model projection</span>
               </div>
+              {selectedAirport && <div className="airport-reference">{selectedAirport.icao} · static airport reference</div>}
               <div className="non-operational">Research display · not for operational use</div>
             </div>
 

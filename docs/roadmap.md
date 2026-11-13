@@ -3,6 +3,7 @@
 ## Delivered vertical slice
 
 - Responsive live radar and historical replay experience
+- Geographic sector filters, static airport focus and 2D/3D MapLibre perspective
 - Synthetic provider with explicit provenance
 - Flight selection, observed track and 5/10/15-minute prediction baseline
 - Transparent anomaly evidence and deterministic intelligence report

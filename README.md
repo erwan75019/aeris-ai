@@ -14,7 +14,8 @@ Digital Twin and analytics screenshots are available in [`docs/qa`](docs/qa/).
 
 ## What works today
 
-- Interactive MapLibre radar with four reproducible synthetic flights
+- Interactive MapLibre radar with four reproducible synthetic flights, sector
+  filters, static airport focus and 2D/3D perspective controls
 - UTC flight replay with play/pause, speed and timeline controls
 - Observed tracks and trained 5/10/15-minute Transformer predictions, with a
   constant-vector fallback for short histories or unavailable artifacts
@@ -50,6 +51,7 @@ python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[dev,database,ml]'
 npm --prefix frontend ci
+pre-commit install
 ```
 
 Start the API and web application in separate terminals:
@@ -88,6 +90,7 @@ npm --prefix frontend run typecheck
 npm --prefix frontend test
 npm --prefix frontend run build
 npm --prefix frontend run test:e2e
+pre-commit run --all-files
 ```
 
 The E2E suite starts both services, tests the radar, Digital Twin and analytics

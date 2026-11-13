@@ -6,6 +6,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 
 import type { FlightState, FlightTrackResponse, PredictionPoint, PredictionResponse } from "@/lib/types";
+import type { AirportReference } from "@/lib/reference";
 
 const CENTER: [number, number] = [2.35, 48.86];
 
@@ -54,13 +55,16 @@ interface RadarMapProps {
   prediction: PredictionResponse | null;
   scenario?: FlightState[] | null;
   scenarioPrediction?: PredictionPoint[] | null;
+  selectedAirport?: AirportReference | null;
+  viewMode?: "2d" | "3d";
   onSelect: (icao24: string) => void;
 }
 
-export function RadarMap({ flights, selectedIcao24, track, prediction, scenario, scenarioPrediction, onSelect }: RadarMapProps) {
+export function RadarMap({ flights, selectedIcao24, track, prediction, scenario, scenarioPrediction, selectedAirport, viewMode = "2d", onSelect }: RadarMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
+  const airportMarkerRef = useRef<maplibregl.Marker | null>(null);
   const [mapError, setMapError] = useState(false);
   const [styleReady, setStyleReady] = useState(false);
 
@@ -191,6 +195,42 @@ export function RadarMap({ flights, selectedIcao24, track, prediction, scenario,
 
   useEffect(() => {
     const map = mapRef.current;
+    if (!map) return;
+    airportMarkerRef.current?.remove();
+    airportMarkerRef.current = null;
+    if (selectedAirport) {
+      const element = document.createElement("div");
+      element.className = "airport-marker";
+      element.setAttribute("role", "img");
+      element.setAttribute("aria-label", `${selectedAirport.icao} ${selectedAirport.name} static reference`);
+      const code = document.createElement("strong");
+      code.textContent = selectedAirport.icao;
+      const dot = document.createElement("i");
+      element.append(code, dot);
+      airportMarkerRef.current = new maplibregl.Marker({ element, anchor: "bottom" })
+        .setLngLat([selectedAirport.longitude, selectedAirport.latitude])
+        .addTo(map);
+      map.flyTo({
+        center: [selectedAirport.longitude, selectedAirport.latitude],
+        zoom: 8,
+        pitch: viewMode === "3d" ? 50 : 0,
+        duration: 500,
+      });
+    }
+  }, [selectedAirport, viewMode]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !styleReady) return;
+    map.easeTo({
+      pitch: viewMode === "3d" ? 50 : 0,
+      bearing: viewMode === "3d" ? -18 : 0,
+      duration: 350,
+    });
+  }, [styleReady, viewMode]);
+
+  useEffect(() => {
+    const map = mapRef.current;
     if (!map || !styleReady) return;
     const trackSource = map.getSource("observed-track") as GeoJSONSource | undefined;
     const predictionSource = map.getSource("predicted-track") as GeoJSONSource | undefined;
@@ -229,5 +269,5 @@ export function RadarMap({ flights, selectedIcao24, track, prediction, scenario,
     );
   }
 
-  return <div ref={containerRef} className="radar-map" aria-label="Interactive demonstration airspace map" />;
+  return <div ref={containerRef} className="radar-map" data-view-mode={viewMode} aria-label="Interactive demonstration airspace map" />;
 }

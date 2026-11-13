@@ -7,7 +7,7 @@
   },
   "responsive": {
     "status": "pass",
-    "evidence": "The radar, timeline, navigation and selected-flight state were rendered and inspected at mobile, tablet and desktop dimensions without horizontal overflow."
+    "evidence": "The radar, horizontally scrollable filter controls, timeline, navigation and selected-flight state were rendered at mobile, tablet and desktop dimensions without page-level horizontal overflow."
   },
   "contentStates": {
     "loading": {
@@ -16,7 +16,7 @@
     },
     "empty": {
       "status": "pass",
-      "evidence": "An empty API response displayed No aircraft in this view and a clear-search action."
+      "evidence": "An empty API response displayed No aircraft in this view and a clear-filters action."
     },
     "error": {
       "status": "pass",
@@ -28,7 +28,7 @@
     },
     "success": {
       "status": "pass",
-      "evidence": "Seven E2E checks loaded four API aircraft, exercised replay and tool-based analysis, ran a weather-perturbed Digital Twin scenario with ML/DL reactions, and rendered API analytics."
+      "evidence": "Seven E2E checks loaded four API aircraft, exercised replay, sector/airport/3D controls and tool-based analysis, ran a weather-perturbed Digital Twin scenario with ML/DL reactions, and rendered API analytics."
     },
     "permission": {
       "status": "not-applicable",
@@ -44,12 +44,12 @@
     {
       "viewport": "768x900",
       "artifact": "tablet-768x900.png",
-      "observation": "Tablet layout keeps the full radar and bottom navigation stable with legible source and replay controls."
+      "observation": "Tablet layout keeps the full radar and bottom navigation stable with reachable sector, airport and replay controls."
     },
     {
       "viewport": "1440x900",
       "artifact": "desktop-1440x900.png",
-      "observation": "Desktop layout shows four aircraft, range rings, observed and projected paths, and the complete selected-flight inspector without overlap."
+      "observation": "Desktop layout shows four aircraft, range rings, geographic/airport/3D controls, observed and projected paths, and the complete selected-flight inspector without overlap."
     },
     {
       "viewport": "1440x900",
