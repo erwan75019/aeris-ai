@@ -1,0 +1,39 @@
+minimum_pre_commit_version: "4.0.0"
+
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: Ruff format
+        entry: python -m ruff format --check
+        language: system
+        types: [python]
+      - id: ruff-lint
+        name: Ruff lint
+        entry: python -m ruff check
+        language: system
+        types: [python]
+      - id: mypy
+        name: Mypy strict backend
+        entry: python -m mypy backend
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.py$
+      - id: frontend-lint
+        name: Frontend ESLint
+        entry: npm --prefix frontend run lint
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(ts|tsx|js|mjs)$
+      - id: frontend-typecheck
+        name: Frontend TypeScript
+        entry: npm --prefix frontend run typecheck
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(ts|tsx)$
+      - id: compose-config
+        name: Docker Compose config
+        entry: docker compose config --quiet
+        language: system
+        pass_filenames: false
+        files: ^(compose\.yaml|docker/.*Dockerfile)$

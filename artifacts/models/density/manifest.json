@@ -1,0 +1,80 @@
+{
+  "artifact_sha256": "cc0b295ffae56a5760b2df1978d9155a8641836422650ede6ed621927d91d88e",
+  "config": {
+    "dataset_id": "synthetic-density-v1",
+    "days": 120,
+    "estimators": 120,
+    "max_depth": 12,
+    "model_version": "1.0.0",
+    "seed": 91
+  },
+  "data_classification": "synthetic_simulation",
+  "dataset_id": "synthetic-density-v1",
+  "feature_names": [
+    "hour_sin",
+    "hour_cos",
+    "weekday_sin",
+    "weekday_cos",
+    "current_aircraft",
+    "lag_15m_aircraft",
+    "lag_30m_aircraft",
+    "rolling_60m_aircraft"
+  ],
+  "horizons_minutes": [
+    15,
+    30,
+    60
+  ],
+  "limitations": [
+    "Training and evaluation counts are synthetic, not measured sector demand.",
+    "The prediction is an experimental regional count, not a capacity or safety limit.",
+    "Test MAE is not calibrated uncertainty for live operations."
+  ],
+  "model_name": "random_forest_density",
+  "model_version": "1.0.0",
+  "persistence_baseline_test_metrics": {
+    "mae_aircraft_15m": 2.5084672166739037,
+    "mae_aircraft_30m": 2.630481980026053,
+    "mae_aircraft_60m": 2.748588797221016,
+    "mean_mae_aircraft": 2.629179331306991,
+    "rmse_aircraft_15m": 3.281614992726344,
+    "rmse_aircraft_30m": 3.418297677205274,
+    "rmse_aircraft_60m": 3.598257888895379
+  },
+  "persistence_baseline_validation_metrics": {
+    "mae_aircraft_15m": 2.582971329278888,
+    "mae_aircraft_30m": 2.664205039096438,
+    "mae_aircraft_60m": 2.6837532580364902,
+    "mean_mae_aircraft": 2.643643208803939,
+    "rmse_aircraft_15m": 3.396349038908118,
+    "rmse_aircraft_30m": 3.4568834866808187,
+    "rmse_aircraft_60m": 3.4920786617242534
+  },
+  "promotion_status": "promoted_for_synthetic_demo",
+  "split_counts": {
+    "test": 2303,
+    "train": 6907,
+    "validation": 2302
+  },
+  "split_policy": "chronological 60/20/20 over one synthetic regional time series",
+  "test_metrics": {
+    "mae_aircraft_15m": 1.8699276547851638,
+    "mae_aircraft_30m": 1.8771243920808125,
+    "mae_aircraft_60m": 1.878146235406248,
+    "mean_mae_aircraft": 1.8750660940907415,
+    "rmse_aircraft_15m": 2.4147889154761253,
+    "rmse_aircraft_30m": 2.427940678072795,
+    "rmse_aircraft_60m": 2.4278543232345533
+  },
+  "trained": true,
+  "trained_at": "2026-11-13T19:38:00.325431+00:00",
+  "validation_metrics": {
+    "mae_aircraft_15m": 1.8898400012338388,
+    "mae_aircraft_30m": 1.8852780267656146,
+    "mae_aircraft_60m": 1.8862157405867297,
+    "mean_mae_aircraft": 1.8871112561953944,
+    "rmse_aircraft_15m": 2.4456970900994475,
+    "rmse_aircraft_30m": 2.4309711376973695,
+    "rmse_aircraft_60m": 2.427638122629051
+  }
+}

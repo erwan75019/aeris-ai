@@ -1,0 +1,47 @@
+{
+  "artifact_sha256": "8d910345a5041e9ebbf2fe379e8e76f3434cb7288aadb2ad9690bd8e529ffbb2",
+  "config": {
+    "dataset_id": "synthetic-injected-v1",
+    "estimators": 240,
+    "model_version": "1.0.0",
+    "seed": 42,
+    "track_count": 180
+  },
+  "data_classification": "synthetic_simulation",
+  "dataset_id": "synthetic-injected-v1",
+  "feature_names": [
+    "max_heading_change_deg",
+    "mean_heading_change_deg",
+    "max_speed_change_kt",
+    "mean_speed_change_kt",
+    "max_vertical_rate_fpm",
+    "altitude_range_ft",
+    "speed_std_kt",
+    "path_efficiency"
+  ],
+  "limitations": [
+    "Evaluation labels are injected synthetic scenarios, not documented incidents.",
+    "The model is not calibrated for operational or safety-critical decisions.",
+    "A statistical outlier does not establish danger, intent, or causality."
+  ],
+  "model_name": "isolation_forest",
+  "model_version": "1.0.0",
+  "promotion_status": "promoted_for_synthetic_demo",
+  "split_counts": {
+    "test": 36,
+    "train": 108,
+    "validation": 36
+  },
+  "split_policy": "chronological 60/20/20 with flight-disjoint tracks",
+  "test_metrics": {
+    "f1": 0.9473684210526315,
+    "false_positive_rate": 0.037037037037037035,
+    "pr_auc": 0.9888888888888892,
+    "precision": 0.9,
+    "recall": 1.0,
+    "roc_auc": 0.9958847736625515
+  },
+  "threshold": 0.09509767916226886,
+  "trained": true,
+  "trained_at": "2026-11-12T21:10:40.720722+00:00"
+}

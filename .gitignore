@@ -6,6 +6,10 @@ venv/
 env/
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
 
 # Environment variables and secrets
 .env
@@ -18,10 +22,12 @@ env/
 # Machine Learning
 mlruns/
 *.pt
+!artifacts/models/**/*.pt
 *.pth
 *.ckpt
 *.pkl
 *.joblib
+!artifacts/models/**/*.joblib
 
 # Datasets
 data/raw/
@@ -32,6 +38,9 @@ node_modules/
 .next/
 out/
 dist/
+frontend/playwright-report/
+frontend/test-results/
+frontend/tsconfig.tsbuildinfo
 
 # macOS
 .DS_Store

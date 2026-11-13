@@ -1,0 +1,59 @@
+name: aeris-ai
+
+services:
+  database:
+    image: postgis/postgis:18-3.7
+    # The upstream tag is currently amd64-only; Apple Silicon uses Docker's
+    # transparent emulation until an arm64 image is published.
+    platform: linux/amd64
+    environment:
+      POSTGRES_DB: aeris
+      POSTGRES_USER: aeris
+      POSTGRES_PASSWORD: aeris
+    volumes:
+      - aeris-postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aeris -d aeris"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    environment:
+      AERIS_ENVIRONMENT: production
+      AERIS_DATA_PROVIDER: demo
+      AERIS_DATABASE_URL: postgresql+asyncpg://aeris:aeris@database:5432/aeris
+      AERIS_CORS_ORIGINS: '["http://localhost:3000"]'
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - >-
+        alembic upgrade head &&
+        python -m backend.scripts.seed_demo &&
+        exec uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    environment:
+      AERIS_BACKEND_INTERNAL_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  aeris-postgres:
