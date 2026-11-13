@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { AppRail } from "@/components/AppRail";
 import { FlightInspector } from "@/components/FlightInspector";
 import { RadarMap } from "@/components/RadarMap";
 import {
@@ -126,16 +127,7 @@ export default function RadarPage() {
 
   return (
     <main className="app-shell">
-      <nav className="rail" aria-label="Primary navigation">
-        <div className="brand-mark" aria-label="AERIS AI">A</div>
-        <div className="rail-links">
-          <button className="rail-button active" type="button" aria-label="Radar — live airspace"><span>⌁</span><small>Radar</small></button>
-          <button className="rail-button" type="button" aria-label="Flights — planned" disabled><span>↗</span><small>Flights</small></button>
-          <button className="rail-button" type="button" aria-label="Predict — planned" disabled><span>⌇</span><small>Predict</small></button>
-          <button className="rail-button" type="button" aria-label="Digital twin — planned" disabled><span>◇</span><small>Twin</small></button>
-        </div>
-        <div className="rail-version">v0.1</div>
-      </nav>
+      <AppRail active="radar" />
 
       <section className="workspace">
         <header className="topbar">

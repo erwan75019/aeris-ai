@@ -1,11 +1,13 @@
 # AERIS AI
 
 AI-powered airspace intelligence, built as an honest and reproducible research
-platform. The current release provides a complete offline radar journey backed
-by synthetic data, transparent prediction/anomaly baselines and deterministic
-analysis tools.
+platform. The current release provides a complete offline radar, Digital Twin
+and analytics journey backed by synthetic data, trained prediction/anomaly
+models and tool-driven intelligence specialists.
 
 ![AERIS AI desktop radar](docs/qa/desktop-1440x900.png)
+
+Digital Twin and analytics screenshots are available in [`docs/qa`](docs/qa/).
 
 > Experimental software only. It is not certified for navigation, air-traffic
 > control, separation, or any safety-critical use.
@@ -14,8 +16,12 @@ analysis tools.
 
 - Interactive MapLibre radar with four reproducible synthetic flights
 - UTC flight replay with play/pause, speed and timeline controls
-- Observed tracks and 5/10/15-minute constant-velocity predictions
+- Observed tracks and trained 5/10/15-minute Transformer predictions, with a
+  constant-vector fallback for short histories or unavailable artifacts
 - Explainable anomaly evidence, scenario simulation and intelligence reports
+- Digital Twin workspace with injected anomalies, synthetic wind, before/after
+  anomaly scores and comparative Transformer forecasts
+- Analytics workspace backed by live API summary and normalized flight telemetry
 - A checksum-verified Isolation Forest trained/evaluated on labelled synthetic
   scenarios, with an automatic transparent-rule fallback
 - LSTM/GRU/Transformer training with early stopping and flight-disjoint temporal
@@ -82,15 +88,15 @@ npm --prefix frontend run build
 npm --prefix frontend run test:e2e
 ```
 
-The E2E suite starts both services, tests the primary radar journey and its
-loading/empty/error states, runs Axe serious/critical accessibility checks, and
-captures desktop, tablet and mobile screenshots in `docs/qa/`.
+The E2E suite starts both services, tests the radar, Digital Twin and analytics
+journeys plus loading/empty/error states, runs Axe serious/critical
+accessibility checks, and captures rendered evidence in `docs/qa/`.
 
 ## Repository map
 
 ```text
 backend/        FastAPI routes, provider protocol and domain services
-frontend/       Next.js radar application and browser tests
+frontend/       Next.js radar, Digital Twin, analytics and browser tests
 docker/         Non-root production image definitions
 docs/           Architecture, data policy, design contract, QA and roadmap
 compose.yaml    Local API/web/PostGIS stack

@@ -3,6 +3,9 @@ import type {
   FlightListResponse,
   FlightTrackResponse,
   PredictionResponse,
+  SimulationAnomaly,
+  SimulationResponse,
+  AnalyticsSummary,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -67,4 +70,27 @@ export function createReport(icao24: string, replayAt?: string): Promise<Intelli
     method: "POST",
     body: JSON.stringify({ icao24, include_weather: true, at: replayAt }),
   });
+}
+
+export function createSimulation(
+  icao24: string,
+  anomalyType: SimulationAnomaly,
+  severity: number,
+  windSpeedKt = 0,
+  windDirectionDeg = 0,
+): Promise<SimulationResponse> {
+  return request<SimulationResponse>("/api/v1/simulations", {
+    method: "POST",
+    body: JSON.stringify({
+      icao24,
+      anomaly_type: anomalyType,
+      severity,
+      wind_speed_kt: windSpeedKt,
+      wind_direction_deg: windDirectionDeg,
+    }),
+  });
+}
+
+export function getAnalyticsSummary(): Promise<AnalyticsSummary> {
+  return request<AnalyticsSummary>("/api/v1/analytics/summary");
 }

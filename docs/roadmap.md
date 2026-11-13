@@ -7,15 +7,17 @@
 - Flight selection, observed track and 5/10/15-minute prediction baseline
 - Transparent anomaly evidence and deterministic intelligence report
 - Scenario simulation endpoint and analytics summary endpoint
+- Digital Twin UI with synthetic wind, comparative ML scores and DL forecasts
+- API-backed analytics UI with metrics, chart and normalized telemetry table
 - API/unit/browser/accessibility tests, Docker images and CI
 - PostGIS schema/migration and idempotent observation ingestion
 - Versioned Isolation Forest plus LSTM/GRU/Transformer experiments and model cards
 
 ## Next production increments
 
-1. Credentialed provider adapters with caching, quota control and provenance
-2. External dataset snapshots and real-data licence review
-3. Shadow evaluation, drift monitoring and artifact rollback controls
+1. Licensed historical dataset snapshots and a real-data licence review
+2. Shadow evaluation, drift monitoring and artifact rollback controls
+3. Traffic-density forecasting with calibrated spatial/temporal evaluation
 4. Authentication, tenant isolation, audit trails and distributed rate limiting
 5. Observability, backups, restore drills and production deployment manifests
 

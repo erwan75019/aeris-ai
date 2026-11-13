@@ -5,7 +5,7 @@ import type { GeoJSONSource, Map as MapLibreMap, StyleSpecification } from "mapl
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 
-import type { FlightState, FlightTrackResponse, PredictionResponse } from "@/lib/types";
+import type { FlightState, FlightTrackResponse, PredictionPoint, PredictionResponse } from "@/lib/types";
 
 const CENTER: [number, number] = [2.35, 48.86];
 
@@ -52,10 +52,12 @@ interface RadarMapProps {
   selectedIcao24: string | null;
   track: FlightTrackResponse | null;
   prediction: PredictionResponse | null;
+  scenario?: FlightState[] | null;
+  scenarioPrediction?: PredictionPoint[] | null;
   onSelect: (icao24: string) => void;
 }
 
-export function RadarMap({ flights, selectedIcao24, track, prediction, onSelect }: RadarMapProps) {
+export function RadarMap({ flights, selectedIcao24, track, prediction, scenario, scenarioPrediction, onSelect }: RadarMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
@@ -86,6 +88,36 @@ export function RadarMap({ flights, selectedIcao24, track, prediction, onSelect 
           type: "line",
           source: "range-rings",
           paint: { "line-color": "#164b5c", "line-width": 1, "line-opacity": 0.52 },
+        });
+        map.addSource("scenario-prediction", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [] },
+        });
+        map.addLayer({
+          id: "scenario-prediction",
+          type: "line",
+          source: "scenario-prediction",
+          paint: {
+            "line-color": "#c58cff",
+            "line-width": 2,
+            "line-dasharray": [1, 2.5],
+            "line-opacity": 0.95,
+          },
+        });
+        map.addSource("scenario-track", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [] },
+        });
+        map.addLayer({
+          id: "scenario-track",
+          type: "line",
+          source: "scenario-track",
+          paint: {
+            "line-color": "#ff776f",
+            "line-width": 2.5,
+            "line-dasharray": [1, 1.5],
+            "line-opacity": 0.95,
+          },
         });
         map.addSource("observed-track", {
           type: "geojson",
@@ -162,6 +194,8 @@ export function RadarMap({ flights, selectedIcao24, track, prediction, onSelect 
     if (!map || !styleReady) return;
     const trackSource = map.getSource("observed-track") as GeoJSONSource | undefined;
     const predictionSource = map.getSource("predicted-track") as GeoJSONSource | undefined;
+    const scenarioSource = map.getSource("scenario-track") as GeoJSONSource | undefined;
+    const scenarioPredictionSource = map.getSource("scenario-prediction") as GeoJSONSource | undefined;
     trackSource?.setData({
       type: "FeatureCollection",
       features: track?.points.length ? [lineFeature(track.points)] : [],
@@ -172,7 +206,19 @@ export function RadarMap({ flights, selectedIcao24, track, prediction, onSelect 
       type: "FeatureCollection",
       features: projection.length ? [lineFeature(projection)] : [],
     });
-  }, [track, prediction, styleReady]);
+    scenarioSource?.setData({
+      type: "FeatureCollection",
+      features: scenario?.length ? [lineFeature(scenario)] : [],
+    });
+    const scenarioLatest = scenario?.at(-1);
+    const scenarioProjection = scenarioLatest && scenarioPrediction
+      ? [scenarioLatest, ...scenarioPrediction]
+      : [];
+    scenarioPredictionSource?.setData({
+      type: "FeatureCollection",
+      features: scenarioProjection.length ? [lineFeature(scenarioProjection)] : [],
+    });
+  }, [track, prediction, scenario, scenarioPrediction, styleReady]);
 
   if (mapError) {
     return (

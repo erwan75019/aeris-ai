@@ -38,18 +38,20 @@ export interface FlightTrackResponse {
   data_classification: DataClassification;
 }
 
+export interface PredictionPoint {
+  horizon_minutes: number;
+  latitude: number;
+  longitude: number;
+  altitude_ft: number | null;
+  timestamp: string;
+  uncertainty_km: number | null;
+}
+
 export interface PredictionResponse {
   icao24: string;
   generated_from: string;
   model: { name: string; version: string; trained: boolean };
-  points: Array<{
-    horizon_minutes: number;
-    latitude: number;
-    longitude: number;
-    altitude_ft: number | null;
-    timestamp: string;
-    uncertainty_km: number | null;
-  }>;
+  points: PredictionPoint[];
   disclaimer: string;
 }
 
@@ -61,4 +63,37 @@ export interface AnomalyResponse {
   factors: Record<string, number>;
   model: { name: string; version: string; trained: boolean };
   disclaimer: string;
+}
+
+export type SimulationAnomaly = "altitude_spike" | "heading_deviation" | "speed_drop";
+
+export interface SimulationResponse {
+  scenario_id: string;
+  classification: "synthetic_simulation";
+  anomaly_type: SimulationAnomaly;
+  weather: {
+    wind_speed_kt: number;
+    wind_direction_deg: number;
+    source: "user_defined_synthetic";
+  };
+  baseline: FlightState[];
+  simulated: FlightState[];
+  model_reaction: {
+    baseline_anomaly_score: number;
+    simulated_anomaly_score: number;
+    baseline_label: "nominal" | "unusual";
+    simulated_label: "nominal" | "unusual";
+    anomaly_model: { name: string; version: string; trained: boolean };
+    trajectory_model: { name: string; version: string; trained: boolean };
+    baseline_prediction: PredictionPoint[];
+    simulated_prediction: PredictionPoint[];
+  };
+  disclaimer: string;
+}
+
+export interface AnalyticsSummary {
+  aircraft_count: number;
+  mean_altitude_ft: number | null;
+  unusual_count: number;
+  classification: DataClassification;
 }

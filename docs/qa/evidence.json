@@ -28,7 +28,7 @@
     },
     "success": {
       "status": "pass",
-      "evidence": "Five E2E checks loaded four API aircraft, selected one, rendered its time-correct track and projection, ran tool-based analysis, and exercised replay."
+      "evidence": "Seven E2E checks loaded four API aircraft, exercised replay and tool-based analysis, ran a weather-perturbed Digital Twin scenario with ML/DL reactions, and rendered API analytics."
     },
     "permission": {
       "status": "not-applicable",
@@ -50,6 +50,16 @@
       "viewport": "1440x900",
       "artifact": "desktop-1440x900.png",
       "observation": "Desktop layout shows four aircraft, range rings, observed and projected paths, and the complete selected-flight inspector without overlap."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "digital-twin-1440x900.png",
+      "observation": "Digital Twin shows separate baseline, simulated and forecast layers, bounded anomaly/weather controls, and the trained models' before/after reaction without operational claims."
+    },
+    {
+      "viewport": "1440x900",
+      "artifact": "analytics-1440x900.png",
+      "observation": "Analytics renders API-derived counts, anomaly totals, altitude chart and normalized aircraft telemetry with explicit synthetic provenance."
     }
   ]
 }

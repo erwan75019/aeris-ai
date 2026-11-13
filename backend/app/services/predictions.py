@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from backend.app.schemas.flight import (
+    FlightTrackResponse,
     ModelDescriptor,
     PredictionPoint,
     PredictionResponse,
@@ -32,6 +33,15 @@ class PredictionService:
         at: datetime | None = None,
     ) -> PredictionResponse:
         track = self.flights.get_track(icao24, at=at)
+        return self.predict_track(track, horizons)
+
+    def predict_track(
+        self,
+        track: FlightTrackResponse,
+        horizons: tuple[int, ...] = (5, 10, 15),
+    ) -> PredictionResponse:
+        """Forecast an explicit track without inserting it into an observed-data provider."""
+
         current = track.points[-1]
         if self.artifact is not None and horizons == HORIZONS and len(track.points) >= INPUT_LENGTH:
             forecast = self.artifact.predict(track.points)

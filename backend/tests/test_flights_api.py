@@ -156,6 +156,39 @@ def test_digital_twin_keeps_simulated_data_separate() -> None:
     assert payload["scenario_id"].startswith("sim-")
     assert len(payload["baseline"]) == len(payload["simulated"])
     assert payload["baseline"] != payload["simulated"]
+    assert payload["weather"] == {
+        "wind_speed_kt": 0.0,
+        "wind_direction_deg": 0.0,
+        "source": "user_defined_synthetic",
+    }
+    assert (
+        payload["model_reaction"]["simulated_anomaly_score"]
+        > payload["model_reaction"]["baseline_anomaly_score"]
+    )
+    assert payload["model_reaction"]["anomaly_model"]["trained"] is True
+    assert payload["model_reaction"]["trajectory_model"]["trained"] is True
+    assert len(payload["model_reaction"]["baseline_prediction"]) == 3
+    assert len(payload["model_reaction"]["simulated_prediction"]) == 3
+
+
+def test_digital_twin_applies_explicit_synthetic_wind() -> None:
+    response = client.post(
+        "/api/v1/simulations",
+        json={
+            "icao24": "ae0001",
+            "anomaly_type": "speed_drop",
+            "severity": 0.4,
+            "wind_speed_kt": 45,
+            "wind_direction_deg": 270,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["weather"]["wind_speed_kt"] == 45
+    assert payload["weather"]["wind_direction_deg"] == 270
+    assert payload["weather"]["source"] == "user_defined_synthetic"
+    assert payload["simulated"][-1]["longitude"] > payload["baseline"][-1]["longitude"]
 
 
 def test_simulation_rejects_unknown_fields() -> None:

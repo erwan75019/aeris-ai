@@ -3,7 +3,7 @@
 from datetime import datetime
 from pathlib import Path
 
-from backend.app.schemas.flight import AnomalyResponse, ModelDescriptor
+from backend.app.schemas.flight import AnomalyResponse, FlightTrackResponse, ModelDescriptor
 from backend.app.services.flights import FlightService
 from backend.app.services.geo import smallest_heading_delta
 from backend.ml.artifacts import ArtifactIntegrityError, IsolationForestArtifact
@@ -21,6 +21,11 @@ class AnomalyService:
 
     def evaluate(self, icao24: str, *, at: datetime | None = None) -> AnomalyResponse:
         track = self.flights.get_track(icao24, at=at)
+        return self.evaluate_track(track)
+
+    def evaluate_track(self, track: FlightTrackResponse) -> AnomalyResponse:
+        """Evaluate an explicit track, including isolated simulation tracks."""
+
         recent = track.points[-40:]
         if self.artifact is not None:
             prediction = self.artifact.predict(recent)

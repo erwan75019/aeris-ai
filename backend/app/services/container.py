@@ -44,7 +44,7 @@ def build_services() -> ServiceContainer:
         flights=flights,
         predictions=predictions,
         anomalies=anomalies,
-        simulations=SimulationService(flights),
+        simulations=SimulationService(flights, anomalies, predictions),
         intelligence=IntelligenceService(flights, anomalies, predictions, weather, settings),
         weather=weather,
     )

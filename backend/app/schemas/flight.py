@@ -92,14 +92,35 @@ class SimulationRequest(BaseModel):
     icao24: str = Field(pattern=r"^[0-9a-fA-F]{6}$")
     anomaly_type: Literal["altitude_spike", "heading_deviation", "speed_drop"]
     severity: float = Field(default=0.5, ge=0.1, le=1)
+    wind_speed_kt: float = Field(default=0, ge=0, le=150)
+    wind_direction_deg: float = Field(default=0, ge=0, lt=360)
+
+
+class SimulationWeather(BaseModel):
+    wind_speed_kt: float
+    wind_direction_deg: float
+    source: Literal["user_defined_synthetic"]
+
+
+class SimulationModelReaction(BaseModel):
+    baseline_anomaly_score: float = Field(ge=0, le=1)
+    simulated_anomaly_score: float = Field(ge=0, le=1)
+    baseline_label: Literal["nominal", "unusual"]
+    simulated_label: Literal["nominal", "unusual"]
+    anomaly_model: ModelDescriptor
+    trajectory_model: ModelDescriptor
+    baseline_prediction: list[PredictionPoint]
+    simulated_prediction: list[PredictionPoint]
 
 
 class SimulationResponse(BaseModel):
     scenario_id: str
     classification: Literal["synthetic_simulation"]
     anomaly_type: str
+    weather: SimulationWeather
     baseline: list[FlightState]
     simulated: list[FlightState]
+    model_reaction: SimulationModelReaction
     disclaimer: str
 
 
